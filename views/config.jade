@@ -1,0 +1,11 @@
+﻿doctype html
+form#selectform(action='config', method='post')
+  | In which format would you like to see your messages: 
+  br
+  br
+  select.selectpicker(data-style='btn-info', name='selectpicker')
+    option(selected='selected', value='bold') Bold
+    option(value='italics') Normal
+  br
+  br
+  input(type='submit', value='Submit')
