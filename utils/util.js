@@ -107,12 +107,39 @@ module.exports.assignTask = function (creator, desc, assignee) {
         }],
         'potentialAction': [
             {
+			"@type": "HttpPOST",
+			"name": "Http Post Action",
+			"target": "https://9d7f2eb5.ngrok.io/send"
+		    },
+            {
                 "@type": "OpenUri",
                 "name": "Go to Website",
                 "targets": [
                     { "os": "default", "uri": "https://www.microsoft.com" }
                 ]
-            }
+            },
+            {
+			"@type": "ActionCard",
+			"name": "Add a note",
+			"inputs": [
+				{
+					"@type": "TextInput",
+					"id": "comment",
+					"isMultiline": true,
+					"title": "Enter your note"
+				}
+			],
+			"actions": [
+				{
+					"@type": "HttpPOST",
+					"name": "OK",
+					"target": "https://connector-poc.azurewebsites.net/send",
+					"successMessage": "Your comment was successfully posted.",
+					"errorMessage": "Your comment couldn't be posted. Please try again."
+				}
+			]
+		}
+
         ]
     }
     return ret;
@@ -145,13 +172,39 @@ module.exports.assignTaskBold = function (creator, desc, assignee) {
             ],
         }],
         'potentialAction': [
+             {
+			"@type": "HttpPOST",
+			"name": "Http Post Action",
+			"target": "https://9d7f2eb5.ngrok.io/send"
+		    },
             {
                 "@type": "OpenUri",
                 "name": "Go to Website",
                 "targets": [
                     { "os": "default", "uri": "https://www.microsoft.com" }
                 ]
-            }
+            },
+            {
+			"@type": "ActionCard",
+			"name": "Add a note",
+			"inputs": [
+				{
+					"@type": "TextInput",
+					"id": "comment",
+					"isMultiline": true,
+					"title": "Enter your note"
+				}
+			],
+			"actions": [
+				{
+					"@type": "HttpPOST",
+					"name": "OK",
+					"target": "https://connector-poc.azurewebsites.net/send",
+					"successMessage": "Your comment was successfully posted.",
+					"errorMessage": "Your comment couldn't be posted. Please try again."
+				}
+			]
+		}
         ]
     }
     return ret;

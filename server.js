@@ -109,6 +109,10 @@ app.post('/assigntask', (req, res) => {
 
 });
 
+app.post('/send', (req, res) => {
+        console.log(req.body);
+    });
+
 app.get('/close', function (req, res) {
   renderView(req, res, 'close.jade');
 });
@@ -159,6 +163,7 @@ function assignTask(config,creator,desc,assignee) {
   // Post to connectors endpoint so they can route the message properly
   rest.postJson(config.webhookUrl, message).on('complete', function (data, response) {
     console.log("success");
+    return;
   });
 }
 function addOrUpdateGroupConfig(group_name, webhook_url, choice, done) {
