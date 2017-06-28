@@ -110,7 +110,10 @@ app.post('/assigntask', (req, res) => {
 });
 
 app.post('/send', (req, res) => {
-        console.log(req.body);
+    var conf = new Config();
+    config.webhookUrl = 'https://outlook.office.com/webhook/e8bd9852-fe51-455f-84b0-530c1c27078f@72f988bf-86f1-41af-91ab-2d7cd011db47/96fd3531-952c-4bb1-bfaf-926e8e42f193/633a71fe164b4b0ba1fedba97887ce2e/fbf02b3a-c006-4373-ba37-9a7143880b44';
+    config.textChoice = 'bold';
+        assignTask(config,'a','b','c');
     });
 
 app.get('/close', function (req, res) {
