@@ -4,4 +4,4 @@ module.exports = mongoose.model('Config',{
     groupName:String,
     webhookUrl: String,
     textChoice: String
-});
+}); 
