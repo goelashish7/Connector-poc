@@ -1,7 +1,8 @@
 var mongoose = require('mongoose');
  
-module.exports = mongoose.model('Config',{
+module.exports = mongoose.model('Gitconfig',{
+    guid:String,
     groupName:String,
     webhookUrl: String,
-    textChoice: String
+    repoName: String
 });

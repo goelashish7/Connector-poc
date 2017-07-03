@@ -107,10 +107,10 @@ module.exports.assignTask = function (creator, desc, assignee) {
         }],
         'potentialAction': [
             {
-			"@type": "HttpPOST",
-			"name": "Http Post Action",
-			"target": "https://9d7f2eb5.ngrok.io/send"
-		    },
+                "@type": "HttpPOST",
+                "name": "Http Post Action",
+                "target": "https://9d7f2eb5.ngrok.io/send"
+            },
             {
                 "@type": "OpenUri",
                 "name": "Go to Website",
@@ -119,26 +119,26 @@ module.exports.assignTask = function (creator, desc, assignee) {
                 ]
             },
             {
-			"@type": "ActionCard",
-			"name": "Add a note",
-			"inputs": [
-				{
-					"@type": "TextInput",
-					"id": "comment",
-					"isMultiline": true,
-					"title": "Enter your note"
-				}
-			],
-			"actions": [
-				{
-					"@type": "HttpPOST",
-					"name": "OK",
-					"target": "https://connector-poc.azurewebsites.net/send",
-					"successMessage": "Your comment was successfully posted.",
-					"errorMessage": "Your comment couldn't be posted. Please try again."
-				}
-			]
-		}
+                "@type": "ActionCard",
+                "name": "Add a note",
+                "inputs": [
+                    {
+                        "@type": "TextInput",
+                        "id": "comment",
+                        "isMultiline": true,
+                        "title": "Enter your note"
+                    }
+                ],
+                "actions": [
+                    {
+                        "@type": "HttpPOST",
+                        "name": "OK",
+                        "target": "https://9d7f2eb5.ngrok.io/send",
+                        "successMessage": "Your comment was successfully posted.",
+                        "errorMessage": "Your comment couldn't be posted. Please try again."
+                    }
+                ]
+            }
 
         ]
     }
@@ -172,11 +172,11 @@ module.exports.assignTaskBold = function (creator, desc, assignee) {
             ],
         }],
         'potentialAction': [
-             {
-			"@type": "HttpPOST",
-			"name": "Http Post Action",
-			"target": "https://9d7f2eb5.ngrok.io/send"
-		    },
+            {
+                "@type": "HttpPOST",
+                "name": "Http Post Action",
+                "target": "https://9d7f2eb5.ngrok.io/send"
+            },
             {
                 "@type": "OpenUri",
                 "name": "Go to Website",
@@ -185,26 +185,26 @@ module.exports.assignTaskBold = function (creator, desc, assignee) {
                 ]
             },
             {
-			"@type": "ActionCard",
-			"name": "Add a note",
-			"inputs": [
-				{
-					"@type": "TextInput",
-					"id": "comment",
-					"isMultiline": true,
-					"title": "Enter your note"
-				}
-			],
-			"actions": [
-				{
-					"@type": "HttpPOST",
-					"name": "OK",
-					"target": "https://connector-poc.azurewebsites.net/send",
-					"successMessage": "Your comment was successfully posted.",
-					"errorMessage": "Your comment couldn't be posted. Please try again."
-				}
-			]
-		}
+                "@type": "ActionCard",
+                "name": "Add a note",
+                "inputs": [
+                    {
+                        "@type": "TextInput",
+                        "id": "comment",
+                        "isMultiline": true,
+                        "title": "Enter your note"
+                    }
+                ],
+                "actions": [
+                    {
+                        "@type": "HttpPOST",
+                        "name": "OK",
+                        "target": "https://9d7f2eb5.ngrok.io/send",
+                        "successMessage": "Your comment was successfully posted.",
+                        "errorMessage": "Your comment couldn't be posted. Please try again."
+                    }
+                ]
+            }
         ]
     }
     return ret;
@@ -222,6 +222,82 @@ module.exports.getTextWithoutMentions = function (message) {
         text = text.trim();
     }
     return text;
+}
+
+module.exports.createNotificationCard = function (guid, id, action, title, user, url, repo) {
+    {
+        var ret = {
+            "@type": "MessageCard",
+            "@context": "http://schema.org/extensions",
+            "summary": "Pull request " + id,
+            "themeColor": "0078D7",
+            "title": "Pull request " + action + " : " + title,
+            "sections": [
+                {
+                    "activityTitle": user,
+                    "activitySubtitle": "9/13/2016, 11:46am",
+                    "activityImage": "http://connectorsdemo.azurewebsites.net/images/MSC12_Oscar_002.jpg",
+                    "facts": [
+                        {
+                            "name": "Pull request #:",
+                            "value": id
+                        },
+                        {
+                            "name": "Action:",
+                            "value": action
+                        },
+                        {
+                            "name": "Repository:",
+                            "value": repo
+                        }
+                    ],
+                    "text": "Description of the pull request"
+                }
+            ],
+            "potentialAction": [
+                {
+                    "@type": "ActionCard",
+                    "name": "Add a comment",
+                    "inputs": [
+                        {
+                            "@type": "TextInput",
+                            "id": "comment",
+                            "title": "Enter your comment",
+                            "isMultiline": true
+                        }
+                    ],
+                    "actions": [
+                        {
+                            "@type": "HttpPOST",
+                            "name": "OK",
+                            "target": "https://connector-poc.azurewebsites.net/send?id="+ guid,
+                            	"successMessage": "Your comment was successfully posted.",
+					"errorMessage": "Your comment couldn't be posted. Please try again."
+                        }
+                    ]
+                },
+                {
+                    "@type": "HttpPOST",
+                    "name": "Merge",
+                    "target": "https://connector-poc.azurewebsites.net/send"
+                },
+                {
+                    "@type": "HttpPOST",
+                    "name": "Close",
+                    "target": "https://connector-poc.azurewebsites.net/send"
+                },
+                {
+                    "@type": "OpenUri",
+                    "name": "View in GitHub",
+                    "targets": [
+                        { "os": "default", "uri": url }
+                    ]
+                }
+            ]
+        }
+    }
+    return ret;
+
 }
 
 // Generates random names

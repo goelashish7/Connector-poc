@@ -1,0 +1,14 @@
+#repoList {
+  width: 170px;
+}
+#pageTypes {
+  width: 170px;
+}
+#leftcolumn { 
+  width: 220px; 
+  float: left
+}
+#rightcolumn {
+  width: 200px;
+  float: right
+}
