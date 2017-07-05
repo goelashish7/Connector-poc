@@ -11,9 +11,10 @@ var express = require('express'),
   mongoose = require('mongoose'),
   uuid = require('node-uuid'),
   User = require('./models/user.js'),
-  XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-mongoose.connect('mongodb://goelashish7:goelashish7@ds062059.mlab.com:62059/gitauth');
+  XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest,
+  CALLBACK_URL = 'https://connector-poc.azurewebsites.net/auth/github/callback';
 
+mongoose.connect('mongodb://goelashish7:goelashish7@ds062059.mlab.com:62059/gitauth');
 passport.serializeUser(function (user, done) {
   done(null, user);
 });
@@ -25,7 +26,7 @@ passport.deserializeUser(function (user, done) {
 passport.use(new GitHubStrategy({
   clientID: 'a27e147b786aaa7c6403',
   clientSecret: 'b44f73535fdd4b92f45774c6c6ea11fa26f852bf',
-  callbackURL: 'https://connector-poc.azurewebsites.net/auth/github/callback'
+  callbackURL: CALLBACK_URL
 },
   function (accessToken, refreshToken, profile, done) {
     var user = new User();
@@ -64,7 +65,7 @@ app.use(passport.session());
 app.get('/auth/github', function (req, res, next) {
   passport.authenticate('github', {
     scope: ['public_repo'],
-    callbackURL: 'https://connector-poc.azurewebsites.net/auth/github/callback',
+    callbackURL: CALLBACK_URL,
     display: 'popup'
   })(req, res, next);
 });
@@ -73,7 +74,7 @@ app.get('/auth/github/callback', function (req, res, next) {
   passport.authenticate('github', {
     successRedirect: '/gitconfig',
     failureRedirect: '/signin',
-    callbackURL: 'https://connector-poc.azurewebsites.net/auth/github/callback'
+    callbackURL: CALLBACK_URL
   })(req, res, next);
 });
 
@@ -113,72 +114,20 @@ app.post('/config', function (req, res) {
   });
 });
 
-// app.get('/send', (req, res) => {
-//   // Handshake and figure out if we already know about this connector config
-//   var webhook_url = (typeof req.query.webhook_url === 'string') ? req.query.webhook_url : '';
-//   Config.findOne({ 'webhookUrl': webhook_url }, function (err, config) {
-//     if (err)
-//       console.log(err);
-//     else
-//       sendMessageToGroup(config);
-//   });
+app.post('/comment', (req, res) => {
+  res.setHeader("CARD-ACTION-STATUS", "Your comments " + "**" + req.body.comment + "**" + " are posted succesfully");
+  res.sendStatus(200);
+});
 
-// });
+app.post('/mergerequest', (req, res) => {
+  console.log(req.body);
+  res.setHeader("CARD-ACTION-STATUS", "Your pull request is merged succesfully");
+  res.sendStatus(200);
+});
 
-// app.post('/createtask', (req, res) => {
-//   // Handshake and figure out if we already know about this connector config
-//   var webhook_url = (typeof req.query.webhook_url === 'string') ? req.query.webhook_url : '';
-//   var body = req.body;
-//   var creator = body.creator;
-//   var desc = body.summary;
-//   Config.findOne({ 'webhookUrl': webhook_url }, function (err, config) {
-//     if (err)
-//       console.log(err);
-//     else
-//       createNewTask(config, creator, desc);
-//   });
-
-// });
-
-// app.post('/assigntask', (req, res) => {
-//   // Handshake and figure out if we already know about this connector config
-//   var webhook_url = (typeof req.query.webhook_url === 'string') ? req.query.webhook_url : '';
-//   var body = req.body;
-//   var creator = body.creator;
-//   var desc = body.summary;
-//   var assignee = body.assignee;
-
-//   Config.findOne({ 'webhookUrl': webhook_url }, function (err, config) {
-//     if (err)
-//       console.log(err);
-//     else
-//       assignTask(config, creator, desc, assignee);
-//   });
-
-// });
-
-app.post('/send', (req, res) => {
-  console.log(req.body)
-  var guid = req.query.id;
-  getGitConfiguration(guid, function (error, configFound) {
-    if (configFound) {
-      var text = "The comments are posted";
-      var message = { "@type": "MessageCard", "summary": "Task", "themeColor": "0078D7", "sections": [{ "text": text }] };
-
-      // Post to connectors endpoint so they can route the message properly
-      rest.postJson(configFound.webhookUrl, message).on('complete', function (data, response) {
-        console.log("merged");
-      });
-      res.setHeader("CARD-ACTION-STATUS","Your comments are posted succesfully");
-      res.sendStatus(200);
-    }
-  });
-  // console.log(req.session.webhook_url);
-  // var conf = new Config();
-  // conf.webhookUrl = 'https://outlook.office.com/webhook/e8bd9852-fe51-455f-84b0-530c1c27078f@72f988bf-86f1-41af-91ab-2d7cd011db47/IncomingWebhook/cb58b339a17e49bd915f89879fa937b7/fbf02b3a-c006-4373-ba37-9a7143880b44';
-  // conf.textChoice = 'bold';
-  // assignTask(conf, 'a', 'b', 'c');
-  // res.sendStatus(200);
+app.post('/closerequest', (req, res) => {
+  res.setHeader("CARD-ACTION-STATUS", "Your pull request is closed succesfully");
+  res.sendStatus(200);
 });
 
 app.post('/notify', (req, res) => {
@@ -217,49 +166,6 @@ function renderView(req, res, view, locals) {
   }
   res.render(view, locals);
 }
-
-// function sendMessageToGroup(config) {
-//   //Generate connector message
-//   var message;
-//   if (config.textChoice == "bold")
-//     message = utils.generateConnectorCardBold();
-//   else
-//     message = utils.generateConnectorCard();
-
-//   // Post to connectors endpoint so they can route the message properly
-//   rest.postJson(config.webhookUrl, message).on('complete', function (data, response) {
-//     console.log("success");
-//   });
-// }
-
-// function createNewTask(config, creator, desc) {
-//   //Generate connector message
-//   var message;
-//   if (config.textChoice == "bold")
-//     message = utils.createTaskBold(creator, desc);
-//   else
-//     message = utils.createTask(creator, desc);
-
-//   // Post to connectors endpoint so they can route the message properly
-//   rest.postJson(config.webhookUrl, message).on('complete', function (data, response) {
-//     console.log("success");
-//   });
-// }
-
-// function assignTask(config, creator, desc, assignee) {
-//   //Generate connector message
-//   var message;
-//   if (config.textChoice == "bold")
-//     message = utils.assignTaskBold(creator, desc, assignee);
-//   else
-//     message = utils.assignTask(creator, desc, assignee);
-
-//   // Post to connectors endpoint so they can route the message properly
-//   rest.postJson(config.webhookUrl, message).on('complete', function (data, response) {
-//     console.log("success");
-//     return;
-//   });
-// }
 
 function findConfig(group_name, webhook_url, repo_name, done) {
   var uuidGit = uuid.v1();

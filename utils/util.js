@@ -270,21 +270,21 @@ module.exports.createNotificationCard = function (guid, id, action, title, user,
                         {
                             "@type": "HttpPOST",
                             "name": "OK",
-                            "target": "https://connector-poc.azurewebsites.net/send?id="+ guid,
-                            	"successMessage": "Your comment was successfully posted.",
-					"errorMessage": "Your comment couldn't be posted. Please try again."
+                            "target": "https://connector-poc.azurewebsites.net/comment",
+                            "body": "comment={{comment.value}}",
+					        "bodyContentType" :"application/x-www-form-urlencoded",
                         }
                     ]
                 },
                 {
                     "@type": "HttpPOST",
                     "name": "Merge",
-                    "target": "https://connector-poc.azurewebsites.net/send"
+                    "target": "https://connector-poc.azurewebsites.net/mergerequest"
                 },
                 {
                     "@type": "HttpPOST",
                     "name": "Close",
-                    "target": "https://connector-poc.azurewebsites.net/send"
+                    "target": "https://connector-poc.azurewebsites.net/closerequest"
                 },
                 {
                     "@type": "OpenUri",
