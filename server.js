@@ -115,6 +115,7 @@ app.post('/config', function (req, res) {
 });
 
 app.post('/comment', (req, res) => {
+  console.log(req.body);
   res.setHeader("CARD-ACTION-STATUS", "Your comments " + "**" + req.body.comment + "**" + " are posted succesfully");
   res.sendStatus(200);
 });
@@ -150,7 +151,8 @@ function sendConnectorCard(config, payload) {
   var user = payload.pull_request.user.login;
   var url = payload.pull_request._links.html.href;
   var repo_name = payload.pull_request.head.repo.full_name;
-  var message = utils.createNotificationCard(config.guid, id, action, title, user, url, repo_name);
+  var number = payload.pull_request.number;
+  var message = utils.createNotificationCard(config.guid, id, action, title, user, url, repo_name,number);
   rest.postJson(config.webhookUrl, message).on('complete', function (data, response) {
     console.log("success");
   });
@@ -209,7 +211,7 @@ function registerWebhook(configuration, user) {
         "pull_request"
       ],
       "config": {
-        "url": "https://connector-poc.azurewebsites.net/notify?id=" + configuration.guid,
+        "url": "https://9d7f2eb5.ngrok.io/notify?id=" + configuration.guid,
         "content_type": "json"
       }
     };

@@ -224,7 +224,7 @@ module.exports.getTextWithoutMentions = function (message) {
     return text;
 }
 
-module.exports.createNotificationCard = function (guid, id, action, title, user, url, repo) {
+module.exports.createNotificationCard = function (guid, id, action, title, user, url, repo,number) {
     {
         var ret = {
             "@type": "MessageCard",
@@ -271,8 +271,8 @@ module.exports.createNotificationCard = function (guid, id, action, title, user,
                             "@type": "HttpPOST",
                             "name": "OK",
                             "target": "https://connector-poc.azurewebsites.net/comment",
-                            "body": "comment={{comment.value}}",
-					        "bodyContentType" :"application/x-www-form-urlencoded",
+                            "body": "{\"comment\":\"{{comment.value}}\",\"number\": " + number +"}",
+					        "bodyContentType" :"application/json",
                         }
                     ]
                 },
