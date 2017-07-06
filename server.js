@@ -211,7 +211,7 @@ function registerWebhook(configuration, user) {
         "pull_request"
       ],
       "config": {
-        "url": "https://9d7f2eb5.ngrok.io/notify?id=" + configuration.guid,
+        "url": "https://connector-poc.azurewebsites.net/notify?id=" + configuration.guid,
         "content_type": "json"
       }
     };
